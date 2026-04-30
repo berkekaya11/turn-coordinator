@@ -1,0 +1,53 @@
+const turnRateInput = document.getElementById("turnRate");
+const rudderInput = document.getElementById("rudder");
+const speedInput = document.getElementById("speed");
+
+const airplane = document.getElementById("airplane");
+const ball = document.getElementById("ball");
+const failureFlag = document.getElementById("failureFlag");
+const warningBox = document.getElementById("warningBox");
+const connectionLight = document.getElementById("connectionLight");
+const statusText = document.getElementById("statusText");
+
+const turnRateValue = document.getElementById("turnRateValue");
+const rudderValue = document.getElementById("rudderValue");
+const speedValue = document.getElementById("speedValue");
+
+const turnRateReadout = document.getElementById("turnRateReadout");
+const turnTimeReadout = document.getElementById("turnTimeReadout");
+const headingReadout = document.getElementById("headingReadout");
+const coordinationReadout = document.getElementById("coordinationReadout");
+
+const scenarioBtn = document.getElementById("scenarioBtn");
+const failureBtn = document.getElementById("failureBtn");
+const resetBtn = document.getElementById("resetBtn");
+const downloadLogBtn = document.getElementById("downloadLogBtn");
+const clearLogBtn = document.getElementById("clearLogBtn");
+
+let heading = 0;
+let lastFrameTime = performance.now();
+let instrumentFailed = false;
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function turnRateToFullTurnTime(rate) {
+  const absRate = Math.abs(rate);
+  if (absRate < 0.05) return "∞";
+  const seconds = 360 / absRate;
+  return `${seconds.toFixed(0)} sn`;
+}
+
+function calculateBallPosition(turnRate, rudder) {
+  const turnEffect = turnRate * 9;
+  const rudderEffect = rudder * 0.58;
+  const slipSkid = clamp(turnEffect - rudderEffect, -50, 50);
+  return 50 + slipSkid * 0.7;
+}
+
+function getCoordinationText(ballPercent) {
+  if (ballPercent < 42) return "Sola kayma";
+  if (ballPercent > 58) return "Sağa kayma";
+  return "Merkezde";
+}
